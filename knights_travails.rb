@@ -24,16 +24,36 @@
 #     [2,4]
 #     [4,3]
 
-# construct chess board
-one_case = 0
-board = Array.new(8) do
-  Array.new(8) do |x|
-    x = one_case
-    one_case += 1
+
+# pseudocode for knight_moves
+class Board
+
+  attr_accessor :board
+
+  def initialize(rows, columns)
+    @rows = rows
+    @columns = columns
+    @board = build_board(rows, columns)
+  end
+
+  def build_board(rows, columns)
+    start = 0
+    Array.new(rows) do
+      Array.new(columns) do |value|
+        value = start
+        start += 1
+      end
+    end
   end
 end
 
-p board
+chess_board = Board.new(8, 8)
+p chess_board
+
+# p chess_board.each
+
+
+
 
 def knight_moves(x, y)
 
