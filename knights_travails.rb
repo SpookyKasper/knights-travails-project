@@ -49,15 +49,37 @@ class Board
       end
     end
   end
+
+  def find_case(x, y)
+    @board[x][y]
+  end
+
+  # pseudocode given a number to find in a board
+  # find the row in which the number is
+  # find the column in which the number is
+  # return the two value
+
+  def find_coordinates(num)
+    coo_row = nil
+    coo_col = nil
+    @board.each_with_index do |row, index|
+      if row.include?(num)
+        coo_row = index
+        coo_col = row.index(num)
+      end
+    end
+    [coo_row, coo_col]
+  end
 end
 
 
 chess_board = Board.new(8, 8)
 chess_board.display
 
-board = chess_board.board
+p chess_board.find_case(3, 2)
 
-p board[3][1]
+p chess_board.find_coordinates(38)
+
 
 
 
