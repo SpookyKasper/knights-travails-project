@@ -36,6 +36,10 @@ class Board
     @board = build_board(rows, columns)
   end
 
+  def display
+    @board.each {|row| p row}
+  end
+
   def build_board(rows, columns)
     start = 0
     Array.new(rows) do
@@ -47,10 +51,14 @@ class Board
   end
 end
 
-chess_board = Board.new(8, 8)
-p chess_board
 
-# p chess_board.each
+chess_board = Board.new(8, 8)
+chess_board.display
+
+board = chess_board.board
+
+p board[3][1]
+
 
 
 
