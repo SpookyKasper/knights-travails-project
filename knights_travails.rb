@@ -74,7 +74,7 @@ end
 
 class Knight
 
-  attr_accessor :possible_moves
+  attr_accessor :possible_moves, :board
   # pseudocode for knight moves
   # define the absolute values
   # fead the possible moves with a all the moves that end up in a square on the board
@@ -82,10 +82,13 @@ class Knight
   def initialize(position)
     @board = Board.new(8, 8)
     @position = position
-    @abs_moves = [17, 15, 10, 6]
+    @abs_moves = [6, 10, 15, 17]
     @possible_moves = possible_moves
   end
 
+  def place_knight()
+
+  end
 
 
   def possible_moves
@@ -96,10 +99,13 @@ class Knight
       moves << move_down if @board.board.flatten.include?(move_down)
       moves << move_up if @board.board.flatten.include?(move_up)
     end
-    moves
+    coordinates = moves.map {|move| @board.find_coordinates(move)}
+    coordinates
   end
 end
 
 knight = Knight.new(30)
 
+knight.board.display
+puts 'hehe'
 p knight.possible_moves
