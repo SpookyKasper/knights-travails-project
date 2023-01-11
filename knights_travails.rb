@@ -72,19 +72,34 @@ class Board
   end
 end
 
+class Knight
 
-chess_board = Board.new(8, 8)
-chess_board.display
+  attr_accessor :possible_moves
+  # pseudocode for knight moves
+  # define the absolute values
+  # fead the possible moves with a all the moves that end up in a square on the board
 
-p chess_board.find_case(3, 2)
+  def initialize(position)
+    @board = Board.new(8, 8)
+    @position = position
+    @abs_moves = [17, 15, 10, 6]
+    @possible_moves = possible_moves
+  end
 
-p chess_board.find_coordinates(38)
 
 
-
-
-
-
-def knight_moves(x, y)
-
+  def possible_moves
+    moves = []
+    @abs_moves.each do |abs|
+      move_down = @position + abs
+      move_up = @position - abs
+      moves << move_down if @board.board.flatten.include?(move_down)
+      moves << move_up if @board.board.flatten.include?(move_up)
+    end
+    moves
+  end
 end
+
+knight = Knight.new(30)
+
+p knight.possible_moves
