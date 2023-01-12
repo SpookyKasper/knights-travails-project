@@ -73,7 +73,8 @@ end
 
 class Knight
 
-  attr_accessor :possible_moves, :board
+  attr_reader :possible_moves
+  attr_accessor :position
 
   def initialize(position = nil)
     @position = position
@@ -99,7 +100,62 @@ class Knight
   end
 end
 
-knight = Knight.new
-knight.board.display
-puts knight.possible_moves
+class KnightGame
+
+  attr_reader :board, :knight, :starting_square
+
+  def initialize(board, knight)
+    @board = board
+    @knight = knight
+  end
+
+  def starting_square(num)
+    coordinates = @board.find_coordinates(num)
+    row = coordinates[0]
+    column = coordinates[1]
+    @knight.place_knight(row, column)
+  end
+
+  # pseucode for treating possibles moves as nodes in a tree
+  # create a node Class that intiliazies with a data, a right node and a left node defaulted to nil
+  # create a Tree class with a build tree method
+end
+
+class Node
+
+  def initialize(data, left=nil, right=nil)
+    @data = data
+    @left = left
+    @right = right
+  end
+end
+
+class Tree
+  def initialize(array)
+    @root = nil
+    @tree = build_tree(array)
+  end
+
+  # pseudocode for build_tree method
+  # given an array, sort that array, make it have only uniq elements and store it in a variable called sorted
+  # find the center of sorted and call it root
+  # create a node out root where the data is the value of the center
+  # the left is the result of calling build tree on the left part of the array
+  # the right is the result of calling build tree on the righ part of the array
+
+  def build_tree(array)
+    sorted = array.uniq.sort
+    center_index = (sorted.size - 1) / 2
+    center = sorted[center_index]
+  end
+end
+
+my_array = [1, 2, 3]
+my_tree = Tree.new(my_array)
+
+my_game = KnightGame.new(Board.new(8, 8), Knight.new)
+my_game.board.display
+p my_game.starting_square(47)
+p my_game.knight.possible_moves
+
 
