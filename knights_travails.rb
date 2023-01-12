@@ -74,34 +74,32 @@ end
 class Knight
 
   attr_accessor :possible_moves, :board
-  # pseudocode for knight moves
-  # define the absolute values
-  # fead the possible moves with a all the moves that end up in a square on the board
 
-  def initialize(position)
-    @board = Board.new(8, 8)
+  def initialize(position = nil)
     @position = position
     @abs_moves = [6, 10, 15, 17]
     @knight_movements = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]
     @possible_moves = possible_moves
   end
 
-  def place_knight()
-  end
-
   def possible_moves
+    return "you first need to place the knight somewhere in the board before I can tell you the possible moves" if @position.nil?
     possible_moves = []
     @knight_movements.each do |knight_move|
       possible_move = @position.map.with_index do |coordinate, index|
         coordinate + knight_move[index]
       end
-      possible_moves << possible_move if possible_move.all? {|coordinate| coordinate.between?(0,8)}
+      possible_moves << possible_move if possible_move.all? {|coordinate| coordinate.between?(0,7)}
     end
     possible_moves
   end
+
+  def place_knight(row, column)
+    @position = [row, column]
+  end
 end
 
-knight = Knight.new([0, 2])
+knight = Knight.new
 knight.board.display
-p knight.possible_moves
+puts knight.possible_moves
 
