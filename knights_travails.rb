@@ -50,14 +50,13 @@ class Board
     end
   end
 
+  def case_exists?(coordinates)
+    find_case(coordinates[0], coordinates[1])
+  end
+
   def find_case(x, y)
     @board[x][y]
   end
-
-  # pseudocode given a number to find in a board
-  # find the row in which the number is
-  # find the column in which the number is
-  # return the two value
 
   def find_coordinates(num)
     coo_row = nil
@@ -90,32 +89,19 @@ class Knight
   def place_knight()
   end
 
-
-  # pseudocode possible_moves with coordinates
-  # given a coordinate of the knight on the board
-  # declare an array possible_moves
-  # iterate through the relatives_coordinates_moves
-    # add the relative move to the position of the knight
-    # and store the result in possible_moves
-
   def possible_moves
     possible_moves = []
     @knight_movements.each do |knight_move|
       possible_move = @position.map.with_index do |coordinate, index|
         coordinate + knight_move[index]
       end
-      possible_moves << possible_move
-      # possible_moves << coordinates
-
-      # moves << move_up if @board.board.flatten.include?(move_up)
+      possible_moves << possible_move if possible_move.all? {|coordinate| coordinate.between?(0,8)}
     end
-    # coordinates = moves.map {|move| @board.find_coordinates(move)}
     possible_moves
   end
 end
 
-knight = Knight.new([3, 5])
-
+knight = Knight.new([0, 2])
 knight.board.display
-puts 'hehe'
 p knight.possible_moves
+
