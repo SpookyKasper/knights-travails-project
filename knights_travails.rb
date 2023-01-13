@@ -100,27 +100,6 @@ class Knight
   end
 end
 
-class KnightGame
-
-  attr_reader :board, :knight, :starting_square
-
-  def initialize(board, knight)
-    @board = board
-    @knight = knight
-  end
-
-  def starting_square(num)
-    coordinates = @board.find_coordinates(num)
-    row = coordinates[0]
-    column = coordinates[1]
-    @knight.place_knight(row, column)
-  end
-
-  # pseucode for treating possibles moves as nodes in a tree
-  # create a node Class that intiliazies with a data, a right node and a left node defaulted to nil
-  # create a Tree class with a build tree method
-end
-
 class Node
 
   attr_reader :data, :left, :right
@@ -140,18 +119,10 @@ class Tree
     @root = build_tree(array)
   end
 
-  # pseudocode for build_tree method
-  # given an array, sort that array, make it have only uniq elements and store it in a variable called sorted
-  # find the center of sorted and call it root
-  # create a node out root where the data is the value of the center
-  # the left is the result of calling build tree on the left part of the array
-  # the right is the result of calling build tree on the righ part of the array
-
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
-
   end
 
   def build_tree(array)
@@ -162,21 +133,43 @@ class Tree
     center_index = sorted.size / 2
     left_half = sorted[0..center_index-1]
     right_half = sorted[center_index+1..]
-    p left_half
-    p right_half
     center = sorted[center_index]
-    @root = Node.new(center, build_tree(left_half), build_tree(right_half))
+    Node.new(center, build_tree(left_half), build_tree(right_half))
   end
 end
 
-my_array = [1, 2, 3, 4, 5, 6, 7]
-my_tree = Tree.new(my_array)
-my_tree.pretty_print
+class KnightGame
+
+  attr_reader :board, :knight, :knight_possibles
+
+  def initialize(board, knight)
+    @board = board
+    @knight = knight
+    @knight_possibles = Tree.new(knight.possible_moves)
+  end
+
+  def starting_square(num)
+    coordinates = @board.find_coordinates(num)
+    row = coordinates[0]
+    column = coordinates[1]
+    @knight.place_knight(row, column)
+  end
 
 
-my_game = KnightGame.new(Board.new(8, 8), Knight.new)
+
+
+  # pseucode for treating possibles moves as nodes in a tree
+  # create a node Class that intiliazies with a data, a right node and a left node defaulted to nil
+  # create a Tree class with a build tree method
+end
+
+
+my_game = KnightGame.new(Board.new(8, 8), Knight.new([3,0]))
+p my_game.knight.position
+p my_game.knight_possibles.pretty_print
+# p my_game.starting_square(34)
+
 my_game.board.display
-p my_game.starting_square(47)
-p my_game.knight.possible_moves
+
 
 
