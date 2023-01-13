@@ -131,9 +131,11 @@ class Node
 end
 
 class Tree
+
+  attr_reader :root
+
   def initialize(array)
-    @root = nil
-    @tree = build_tree(array)
+    @root = build_tree(array)
   end
 
   # pseudocode for build_tree method
@@ -144,14 +146,24 @@ class Tree
   # the right is the result of calling build tree on the righ part of the array
 
   def build_tree(array)
+    return if array.empty?
+    return Node.new(array[0]) if array.size < 2
+
     sorted = array.uniq.sort
-    center_index = (sorted.size - 1) / 2
+    center_index = sorted.size / 2
+    left_half = sorted[0..center_index-1]
+    right_half = sorted[center_index+1..]
+    p left_half
+    p right_half
     center = sorted[center_index]
+    @root = Node.new(center, build_tree(left_half), build_tree(right_half))
   end
 end
 
-my_array = [1, 2, 3]
+my_array = [1, 2, 3, 5, 6, 7]
 my_tree = Tree.new(my_array)
+p my_tree.root
+
 
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
