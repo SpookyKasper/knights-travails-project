@@ -123,6 +123,8 @@ end
 
 class Node
 
+  attr_reader :data, :left, :right
+
   def initialize(data, left=nil, right=nil)
     @data = data
     @left = left
@@ -145,6 +147,13 @@ class Tree
   # the left is the result of calling build tree on the left part of the array
   # the right is the result of calling build tree on the righ part of the array
 
+  def pretty_print(node = @root, prefix = '', is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+
+  end
+
   def build_tree(array)
     return if array.empty?
     return Node.new(array[0]) if array.size < 2
@@ -160,9 +169,9 @@ class Tree
   end
 end
 
-my_array = [1, 2, 3, 5, 6, 7]
+my_array = [1, 2, 3, 4, 5, 6, 7]
 my_tree = Tree.new(my_array)
-p my_tree.root
+my_tree.pretty_print
 
 
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
