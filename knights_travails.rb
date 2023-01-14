@@ -50,12 +50,12 @@ class Board
     end
   end
 
-  def case_exists?(coordinates)
-    find_case(coordinates[0], coordinates[1])
-  end
+  # def case_exists?(coordinates)
+  #   find_square(coordinates[0], coordinates[1])
+  # end
 
-  def find_case(x, y)
-    @board[x][y]
+  def find_square(coordinates)
+    @board[coordinates[0]][coordinates[1]]
   end
 
   def find_coordinates(num)
@@ -136,6 +136,22 @@ class Tree
     center = sorted[center_index]
     Node.new(center, build_tree(left_half), build_tree(right_half))
   end
+
+  # pseudo for inorder
+  # given a tree start at the root
+  # if the current node is nil return
+  # if both left and right child are nil, push the data to the result array
+  # call the inorder on the left child
+  # push the current node data to the result
+  # call the inorder on the righ child
+
+  def inorder(current_node = @root, result = [])
+    return if current_node.nil?
+    result << current_node.data and return result if current_node.left.nil? && current_node.right.nil?
+    inorder(current_node.left, result)
+    result << current_node.data
+    inorder(current_node.right, result)
+  end
 end
 
 class KnightGame
@@ -145,31 +161,53 @@ class KnightGame
   def initialize(board, knight)
     @board = board
     @knight = knight
-    @knight_possibles = Tree.new(knight.possible_moves)
+    @possible_moves = nil
   end
 
-  def starting_square(num)
+  def def_starting_square_num(num)
     coordinates = @board.find_coordinates(num)
     row = coordinates[0]
     column = coordinates[1]
     @knight.place_knight(row, column)
   end
 
+  def def_starting_square_coo(coordinates)
+    @knight.place_knight(coordinates[0], coordinates[1])
+  end
+
+  # pseudocode for knight_moves(start, end, path = [])
+  # given a start and an end square find the shortest path to it
+  # declare an empty array called path = []
+  # push the start_square to the array
+  # check all the possible moves from the start square
+  # if one of the moves is the end square push it to the path and return the path
+  # if none of the moves is the end square
+  # recursively call knight_noves on each node
+
+  def search_end_square(end_square, current_node = @possible_moves.root)
+    return if current_node.nil?
+    return end_square if current_node.data == end_square
+    end_square < current_node.data ? search_end_square(end_square, current_node.left) : search_end_square(end_square, current_node.right)
+  end
 
 
-
-  # pseucode for treating possibles moves as nodes in a tree
-  # create a node Class that intiliazies with a data, a right node and a left node defaulted to nil
-  # create a Tree class with a build tree method
+  def knight_moves(start_square, end_square, path = [start_square])
+    @knight.place_knight(start_square[0], start_square[1])
+    num_end = @board.find_square(end_square)
+    @possible_moves = Tree.new(knight.possible_moves.map {|move| @board.find_square(move)})
+    # possible_moves.pretty_print
+    result = search_end_square(num_end)
+    path << @board.find_coordinates(result) and return path unless result.nil?
+    possible_moves.inorder.each do |square|
+      knight_moves(@board.find_coordinates(square), end_square)
+    end
+  end
 end
 
 
-my_game = KnightGame.new(Board.new(8, 8), Knight.new([3,0]))
-p my_game.knight.position
-p my_game.knight_possibles.pretty_print
-# p my_game.starting_square(34)
-
+my_game = KnightGame.new(Board.new(8, 8), Knight.new([4, 0]))
 my_game.board.display
+p my_game.knight_moves([0, 0], [1, 2])
 
 
 
