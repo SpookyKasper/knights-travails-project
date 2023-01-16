@@ -129,10 +129,10 @@ class KnightGame
   # otherwise push all the children to discovered_nodes
   # call the seaerch method again
 
-  def search_with_path(goal, discovered_nodes = [@possible_moves_tree.root], result = [])
+  def search_with_path(goal, discovered_nodes = [@possible_moves_tree.root], result = [@possible_moves_tree.root.data])
     current_node = discovered_nodes[0]
-    result << current_node.data
-    return result if current_node.data == goal
+    result << current_node.data if current_node.children.any? {|child| child.data == goal}
+    result << goal and return result if current_node.data == goal
 
     current_node.children.each {|child| discovered_nodes << child}
     discovered_nodes.shift
