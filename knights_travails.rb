@@ -80,6 +80,8 @@ end
 
 class Tree
 
+  attr_reader :tree,  :root
+
   def initialize(starting_position)
     @root = Node.new(starting_position)
     @tree = build_tree
@@ -92,13 +94,24 @@ class Tree
   # make a node out of the  position
   # make a knight place at the positon
   #
-  def build_tree(current_node = @root, left = (1..64).to_a)
-    return if left.empty?
+  def build_tree(current_node = @root, board = Board.new(8, 8), left = (1..64).to_a, queue = [])
+    return @root if left.empty?
 
     knight = Knight.new(current_node.data)
-    moves_nodes = knight.possible_moves.map {|move| Node.new(move)}
-    moves_nodes.each {|move| current_node.children << move}
-    p @root
+    current_num = board.find_square(current_node.data)
+
+    possible_moves = knight.possible_moves
+    moves_nodes = possible_moves.map {|move| Node.new(move)}
+    numbered_moves = possible_moves.map {|move| board.find_square(move)}
+
+    moves_nodes.each_with_index {|move, index| current_node.children << move if left.include?(numbered_moves[index])}
+
+    left.delete(current_num)
+    numbered_moves.each {|move| left.delete(move)}
+
+    queue.shift
+    moves_nodes.each {|node| queue << node}
+    build_tree(queue[0], board, left, queue)
   end
 end
 
@@ -157,6 +170,7 @@ end
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
 my_tree = Tree.new([2, 2])
+p my_tree.root
 
 
 
