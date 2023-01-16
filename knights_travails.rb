@@ -50,7 +50,9 @@ class Knight
     @possible_moves = possible_moves
   end
 
-  def place_knight(row, column)
+  def place_knight(coordinates)
+    row = coordinates[0]
+    column = coordinates[1]
     @position = [row, column]
   end
 
@@ -67,21 +69,61 @@ class Knight
   end
 end
 
+class Node
+  attr_accessor :data, :children
+
+  def initialize(data)
+    @data = data
+    @children = []
+  end
+end
+
 class KnightGame
 
-  attr_reader :board, :knight, :knight_possibles
+  attr_reader :board, :knight
 
   def initialize(board, knight)
     @board = board
     @knight = knight
   end
+
+  # pseudocode for make tree:
+  # given a starting square make a tree of the possible moves
+  # place the night at the current_square
+  # delete the current square from the left array
+  # make an array of all the possible moves from that position
+  # push a numbered version of all those moves tho the queueq
+
+  def make_tree(current_square, left = (1..64).to_a, queue = [current_square.data])
+    # return if all the square have been visited
+    return if left.empty?
+
+    # place the knight on the first element of the queue
+    @knight.place_knight(queue[0])
+    # delete the number of that square from the left array
+    left.delete(@board.find_square(queue[0]))
+    # make an array of the possible moves called moves
+    moves = @knight.possible_moves
+    # push each move to the queue unless their numbered version is not in left
+    moves.each {|move| queue << move if left.include?(@board.find_square(move))}
+    # make a number version of each move
+    num_moves = moves.map {|move| @board.find_square(move)}
+    # delete that number from the left array
+    num_moves.each {|num| left.delete(num)}
+    # shift the first element of queue
+    queue.shift
+    make_tree(queue[0], left, queue)
+  end
+
 end
 
 
 
-my_game = KnightGame.new(Board.new(8, 8), Knight.new([4, 0]))
+my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
-my_game.make_tree_of_moves
+my_game.make_tree(Node.new([0,0]))
+
+
 
 
 
