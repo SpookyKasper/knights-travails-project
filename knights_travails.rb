@@ -81,7 +81,7 @@ end
 
 class Tree
 
-  attr_reader :tree, :root
+  attr_accessor :tree, :root
 
   def initialize(starting_position)
     @root = Node.new(starting_position)
@@ -103,6 +103,26 @@ class Tree
     moves_nodes.each {|node| queue << node}
     build_tree(queue[0], board, left, queue)
   end
+
+    # Pseudo for find method
+  # Given a goal and a tree search for the goal
+  # return the node with the goal is found or nil if not as following:
+  # start at the root
+  # if the current node data is equal to the goal return the current node
+  # if the current node has no children (is a leaf) return
+  # otherwise call the find method on each children
+
+  def find(goal, current_node = @root)
+    return current_node if current_node.data == goal
+    return if current_node.children.nil?
+
+    result = nil
+    until current_node.children.empty? || result
+      result = find(goal, current_node.children[0])
+      return result if result
+      current_node.children.shift
+    end
+  end
 end
 
 class KnightGame
@@ -119,26 +139,6 @@ class KnightGame
     @knight.position = position
     @possible_moves_tree = Tree.new(position)
   end
-
-  # pseudo for searching the last move in the tree while outputing the path
-  # given a tree and some data search the tree while keeping track of the path
-  # make an array called discovered_nodes with the root of the tree as the only element
-  # the current_nodes equals the first element of the discovered_nodes
-  # pusth the current_nodes data to the result
-  # if the current_nodes data equals the goal, return the result
-  # otherwise push all the children to discovered_nodes
-  # call the seaerch method again
-
-  def search_with_path(goal, discovered_nodes = [@possible_moves_tree.root], result = [@possible_moves_tree.root.data])
-    current_node = discovered_nodes[0]
-    result << current_node.data if current_node.children.any? {|child| child.data == goal}
-    result << goal and return result if current_node.data == goal
-
-    current_node.children.each {|child| discovered_nodes << child}
-    discovered_nodes.shift
-    search_with_path(goal, discovered_nodes, result)
-  end
-
 end
 
 
@@ -146,16 +146,7 @@ end
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
 my_game.place_knight_and_make_tree([0, 0])
-path = my_game.search_with_path([3, 3])
-p path
-
-numbered_path = path.map {|move| my_game.board.find_square(move)}
-p numbered_path
-
-
-
-
-
-
-
+my_tree = my_game.possible_moves_tree
+my_node = my_tree.find([8, 4])
+p my_node.data
 
