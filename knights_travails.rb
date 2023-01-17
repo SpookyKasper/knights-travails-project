@@ -124,17 +124,14 @@ class Tree
   # otherwise check for every children which is an ancestor of the goal (which doesn't return nil when find(goal) is called on it)
   # push that ancestor to the path and call the knight_moves on it
 
-  def search_and_path(goal, current_node = @root, path = [])
-    puts "this is the current node data #{current_node.data}"
+  def search_and_path(goal, current_node = @root, path = [current_node.data])
     return path if current_node.data == goal
 
     # otherwise check for every children which is an ancestor of the goal (which doesn't return nil when find(goal) is called on it)
     children_data = current_node.children.map {|child| child.data}
-    p children_data
     ancestor = current_node.children.select {|child| find(goal, child)}
-    p ancestor[0].data
-
-
+    path << ancestor[0].data
+    search_and_path(goal, ancestor[0], path)
   end
 
 end
@@ -160,5 +157,5 @@ my_game.board.display
 my_game.place_knight_and_make_tree([0, 0])
 
 my_tree = my_game.possible_moves_tree
-my_tree.search_and_path([4, 0])
+p my_tree.search_and_path([4, 0])
 
