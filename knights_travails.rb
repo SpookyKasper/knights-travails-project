@@ -1,5 +1,5 @@
+# Creates board objects with arg1 number of rows and arg2 number of columns
 class Board
-
   attr_accessor :board
 
   def initialize(rows, columns)
@@ -9,7 +9,7 @@ class Board
   end
 
   def display
-    @board.each {|row| p row}
+    @board.each { |row| p row }
   end
 
   def build_board(rows, columns)
@@ -40,7 +40,6 @@ class Board
 end
 
 class Knight
-
   attr_reader :possible_moves
   attr_accessor :position
 
@@ -58,7 +57,8 @@ class Knight
   end
 
   def possible_moves
-    return "you first need to place the knight somewhere in the board before I can tell you the possible moves" if @position.nil?
+    return 'you first need to place the knight somewhere in the board before I can tell you the possible moves' if @position.nil?
+
     possible_moves = []
     @knight_movements.each do |knight_move|
       possible_move = @position.map.with_index do |coordinate, index|
@@ -80,7 +80,6 @@ class Node
 end
 
 class Tree
-
   attr_accessor :tree, :root
 
   def initialize(starting_position)
@@ -94,50 +93,39 @@ class Tree
     knight = Knight.new(current_node.data)
     current_num = board.find_square(current_node.data)
     possible_moves = knight.possible_moves
-    moves_nodes = possible_moves.map {|move| Node.new(move)}
-    numbered_moves = possible_moves.map {|move| board.find_square(move)}
-    moves_nodes.each_with_index {|move, index| current_node.children << move if left.include?(numbered_moves[index])}
+    moves_nodes = possible_moves.map { |move| Node.new(move) }
+    numbered_moves = possible_moves.map { |move| board.find_square(move) }
+    moves_nodes.each_with_index { |move, index| current_node.children << move if left.include?(numbered_moves[index]) }
     left.delete(current_num)
-    numbered_moves.each {|move| left.delete(move)}
+    numbered_moves.each { |move| left.delete(move) }
     queue.shift
-    moves_nodes.each {|node| queue << node}
+    moves_nodes.each { |node| queue << node }
     build_tree(queue[0], board, left, queue)
   end
 
-  def find(goal, current_node = @root)
+  def find(goal, current_node = @root, result = nil)
     return current_node if current_node.data == goal
     return if current_node.children.nil?
 
-    result = nil
     until current_node.children.empty? || result
       result = find(goal, current_node.children[0])
       return result if result
+
       current_node.children.shift
     end
   end
 
-    # Pseudo for knight_moves method
-  # given a starting square and a end square (goal) parameters, return the shortest path
-  # add a parameter called path with inital value of an empty array
-  # starting at the root of the tree of moves apply the following
-  # if the current_node data equals the goal return the path
-  # otherwise check for every children which is an ancestor of the goal (which doesn't return nil when find(goal) is called on it)
-  # push that ancestor to the path and call the knight_moves on it
-
   def search_and_path(goal, current_node = @root, path = [current_node.data])
     return path if current_node.data == goal
 
-    # otherwise check for every children which is an ancestor of the goal (which doesn't return nil when find(goal) is called on it)
-    children_data = current_node.children.map {|child| child.data}
-    ancestor = current_node.children.select {|child| find(goal, child)}
+    current_node.children.map(&:data)
+    ancestor = current_node.children.select { |child| find(goal, child) }
     path << ancestor[0].data
     search_and_path(goal, ancestor[0], path)
   end
-
 end
 
 class KnightGame
-
   attr_reader :board, :knight, :possible_moves_tree
 
   def initialize(board, knight)
@@ -151,21 +139,14 @@ class KnightGame
     @possible_moves_tree = Tree.new(position)
   end
 
-  # Pseudo for knight_moves
-  # given start and end coordinates output the shortest path
-  # place the knight and make the tree of moves from the start position
-  # search the tree for the goal and output the path
-
   def knight_moves(start, goal)
     place_knight_and_make_tree(start)
     path = @possible_moves_tree.search_and_path(goal)
-    puts "You made it in #{path.length-1} moves! Here's your path"
-    path.each {|move| p move}
-
+    puts "You made it in #{path.length - 1} moves! Here's your path"
+    path.each { |move| p move }
   end
 end
 
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
 my_game.knight_moves([3, 3], [4, 3])
-
