@@ -150,12 +150,22 @@ class KnightGame
     @knight.position = position
     @possible_moves_tree = Tree.new(position)
   end
+
+  # Pseudo for knight_moves
+  # given start and end coordinates output the shortest path
+  # place the knight and make the tree of moves from the start position
+  # search the tree for the goal and output the path
+
+  def knight_moves(start, goal)
+    place_knight_and_make_tree(start)
+    path = @possible_moves_tree.search_and_path(goal)
+    puts "You made it in #{path.length-1} moves! Here's your path"
+    path.each {|move| p move}
+
+  end
 end
 
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
-my_game.place_knight_and_make_tree([0, 0])
-
-my_tree = my_game.possible_moves_tree
-p my_tree.search_and_path([4, 0])
+my_game.knight_moves([3, 3], [4, 3])
 
