@@ -90,20 +90,13 @@ class Tree
   def build_tree(root_node, current_node = root_node, queue = [])
     return root_node if @left.empty?
 
-    # place the knight on the board
     @knight.place_knight(current_node.data)
-    # make an array of the possible moves from that square
     possible_moves = @knight.possible_moves
-    # make nodes out of every possible move
     moves_nodes = possible_moves.map { |move| Node.new(move) }
-    # transform the possible moves to the numbers on the squares
     numbered_moves = possible_moves.map { |move| @board.find_square(move) }
-    # push the possible moves nodes to the children of the current node and to the queue
-    moves_nodes.each_with_index { |move, index| current_node.children << move && queue << move if @left.include?(numbered_moves[index])}
-    # delete the visited squares from the left array
+    moves_nodes.each_with_index { |move, i| current_node.children << move && queue << move if @left.include?(numbered_moves[i]) }
     @left.delete(@board.find_square(current_node.data))
     numbered_moves.each { |move| @left.delete(move) }
-
     queue.shift
     build_tree(root_node, queue[0], queue)
   end
