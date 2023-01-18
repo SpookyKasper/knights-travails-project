@@ -1,4 +1,3 @@
-# Creates board objects with arg1 number of rows and arg2 number of columns
 class Board
   attr_accessor :board
 
@@ -45,7 +44,6 @@ class Knight
 
   def initialize(position = nil)
     @position = position
-    @abs_moves = [6, 10, 15, 17]
     @knight_movements = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]
     @possible_moves = possible_moves
   end
@@ -83,24 +81,31 @@ class Tree
   attr_accessor :tree, :root
 
   def initialize(starting_position)
-    @root = Node.new(starting_position)
-    @tree = build_tree
+    @board = Board.new(8, 8)
+    @knight = Knight.new
+    @left = (1..64).to_a
+    @root = build_tree(Node.new(starting_position))
   end
 
-  def build_tree(current_node = @root, board = Board.new(8, 8), left = (1..64).to_a, queue = [])
-    return @root if left.empty?
+  def build_tree(root_node, current_node = root_node, queue = [])
+    return root_node if @left.empty?
 
-    knight = Knight.new(current_node.data)
-    current_num = board.find_square(current_node.data)
-    possible_moves = knight.possible_moves
+    # place the knight on the board
+    @knight.place_knight(current_node.data)
+    # make an array of the possible moves from that square
+    possible_moves = @knight.possible_moves
+    # make nodes out of every possible move
     moves_nodes = possible_moves.map { |move| Node.new(move) }
-    numbered_moves = possible_moves.map { |move| board.find_square(move) }
-    moves_nodes.each_with_index { |move, index| current_node.children << move if left.include?(numbered_moves[index]) }
-    left.delete(current_num)
-    numbered_moves.each { |move| left.delete(move) }
+    # transform the possible moves to the numbers on the squares
+    numbered_moves = possible_moves.map { |move| @board.find_square(move) }
+    # push the possible moves nodes to the children of the current node and to the queue
+    moves_nodes.each_with_index { |move, index| current_node.children << move && queue << move if @left.include?(numbered_moves[index])}
+    # delete the visited squares from the left array
+    @left.delete(@board.find_square(current_node.data))
+    numbered_moves.each { |move| @left.delete(move) }
+
     queue.shift
-    moves_nodes.each { |node| queue << node }
-    build_tree(queue[0], board, left, queue)
+    build_tree(root_node, queue[0], queue)
   end
 
   def find(goal, current_node = @root, result = nil)
@@ -146,7 +151,8 @@ class KnightGame
     path.each { |move| p move }
   end
 end
+mytree = Tree.new([0, 0])
 
 my_game = KnightGame.new(Board.new(8, 8), Knight.new)
 my_game.board.display
-my_game.knight_moves([3, 3], [4, 3])
+my_game.knight_moves([0, 0], [3, 3])
